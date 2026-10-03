@@ -50,6 +50,7 @@
             <div class="toolbar-group">
               <button class="btn" id="exportPngBtn">📷 Export PNG</button>
               <button class="btn" id="exportSvgBtn">🎨 Copy to Figma (SVG)</button>
+              <button class="btn" id="exportVideoBtn">🎥 Export Video</button>
               <button class="btn btn-primary" id="exportCssBtn">💻 Copy CSS</button>
             </div>
           </div>
@@ -108,6 +109,11 @@
               <span id="noiseVal">15%</span>
             </div>
             <input type="range" class="range-slider" id="noiseSlider" min="0" max="60" value="15">
+            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; align-items: center;">
+              <label style="font-size: 0.8rem; color: var(--text-secondary); cursor: pointer;">
+                <input type="checkbox" id="monoNoiseCheck" checked> Monochrome Grain
+              </label>
+            </div>
           </div>
 
           <div class="control-group">
@@ -120,10 +126,33 @@
 
           <div class="control-group">
             <div class="control-label">
-              <span>Animation / Flow Speed</span>
-              <span id="speedVal">Static</span>
+              <span>Animation Controls</span>
+              <button class="btn btn-sm" id="playPauseAnimBtn">⏸️ Pause</button>
             </div>
-            <input type="range" class="range-slider" id="speedSlider" min="0" max="100" value="0">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+              <span style="font-size: 0.8rem; color: var(--text-secondary);">Speed:</span>
+              <span id="speedVal" style="font-size: 0.8rem; font-weight: bold;">1.0x</span>
+            </div>
+            <input type="range" class="range-slider" id="speedSlider" min="0" max="100" value="20">
+          </div>
+
+          <div class="control-group">
+            <div class="control-label">Aspect Ratio Overlay & Render Resolution</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+              <select class="btn" id="aspectRatioOverlaySelect" style="width: 100%;">
+                <option value="none">No Overlay</option>
+                <option value="16:9">16:9 Desktop</option>
+                <option value="9:16">9:16 Mobile</option>
+                <option value="1:1">1:1 Square</option>
+                <option value="4:5">4:5 Social</option>
+                <option value="21:9">21:9 Ultrawide</option>
+              </select>
+              <select class="btn" id="exportScaleSelect" style="width: 100%;">
+                <option value="1">1x Standard</option>
+                <option value="2" selected>2x High-Res (2K)</option>
+                <option value="4">4x Ultra HD (4K)</option>
+              </select>
+            </div>
           </div>
 
           <div class="control-group">
@@ -277,6 +306,56 @@
     </div>
   </div>
 
+  <!-- Video Export Modal -->
+  <div class="modal-backdrop" id="videoModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Export MP4 / WebM Animated Video</div>
+        <button class="btn btn-sm" id="closeVideoModalBtn">&times; Close</button>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-secondary);">Record and render live ambient motion gradient into high-resolution video file:</p>
+
+      <div style="display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0;">
+        <div class="control-group">
+          <div class="control-label">Duration</div>
+          <select class="btn" id="videoDurationSelect" style="width: 100%;">
+            <option value="3">3 Seconds</option>
+            <option value="5" selected>5 Seconds</option>
+            <option value="10">10 Seconds</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">Frame Rate & Format</div>
+          <div style="display: flex; gap: 0.5rem;">
+            <select class="btn" id="videoFpsSelect" style="flex: 1;">
+              <option value="60" selected>60 FPS (Ultra Smooth)</option>
+              <option value="30">30 FPS (Standard)</option>
+            </select>
+            <select class="btn" id="videoFormatSelect" style="flex: 1;">
+              <option value="mp4" selected>MP4 Container</option>
+              <option value="webm">WebM Container</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="control-group" id="videoProgressContainer" style="display: none;">
+          <div class="control-label">
+            <span>Recording Status</span>
+            <span id="videoProgressVal">0%</span>
+          </div>
+          <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-top: 0.5rem;">
+            <div id="videoProgressBar" style="width: 0%; height: 100%; background: var(--accent); transition: width 0.1s linear;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+        <button class="btn btn-primary" id="startRecordBtn" style="width: 100%;">🎬 Record & Export Video</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Live Preview Modal -->
   <div class="modal-backdrop" id="previewModal">
     <div class="modal-content" style="max-width: 90vw; width: 1000px; height: 80vh;">
@@ -296,6 +375,7 @@
   <!-- Local JS Dependencies & Application Scripts -->
   <script src="assets/js/jszip.min.js"></script>
   <script src="assets/js/cielab.js"></script>
+  <script src="assets/js/recorder.js"></script>
   <script src="assets/js/renderer.js"></script>
   <script src="assets/js/studio.js"></script>
   <script src="assets/js/toolbar.js"></script>

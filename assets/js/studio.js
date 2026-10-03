@@ -258,7 +258,42 @@ window.StudioEditor = (function () {
     if (speedSlider) {
       speedSlider.addEventListener('input', (e) => {
         config.speed = parseInt(e.target.value);
-        document.getElementById('speedVal').textContent = config.speed > 0 ? `${config.speed}%` : 'Static';
+        const speedValEl = document.getElementById('speedVal');
+        if (speedValEl) {
+          const mult = (config.speed / 20).toFixed(1);
+          speedValEl.textContent = config.speed > 0 ? `${mult}x` : 'Paused';
+        }
+      });
+    }
+
+    const playPauseBtn = document.getElementById('playPauseAnimBtn');
+    let isPlaying = true;
+    if (playPauseBtn) {
+      playPauseBtn.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        if (isPlaying) {
+          playPauseBtn.textContent = '⏸️ Pause';
+          config.speed = parseInt(document.getElementById('speedSlider').value) || 20;
+        } else {
+          playPauseBtn.textContent = '▶️ Play';
+          config.speed = 0;
+        }
+      });
+    }
+
+    const aspectSelect = document.getElementById('aspectRatioOverlaySelect');
+    if (aspectSelect) {
+      aspectSelect.addEventListener('change', (e) => {
+        const frameOverlay = document.getElementById('frameOverlay');
+        const val = e.target.value;
+        if (frameOverlay) {
+          if (val === 'none') {
+            frameOverlay.style.display = 'none';
+          } else {
+            frameOverlay.style.display = 'flex';
+            frameOverlay.textContent = `${val} Aspect Ratio Frame`;
+          }
+        }
       });
     }
 

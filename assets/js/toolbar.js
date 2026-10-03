@@ -191,6 +191,72 @@ background: linear-gradient(135deg, ${stops});`;
 
     const previewBtn = document.getElementById('livePreviewBtn');
     if (previewBtn) previewBtn.addEventListener('click', openLivePreview);
+
+    // Video Export Modal Handlers
+    const exportVideoBtn = document.getElementById('exportVideoBtn');
+    const videoModal = document.getElementById('videoModal');
+    const closeVideoModalBtn = document.getElementById('closeVideoModalBtn');
+    const startRecordBtn = document.getElementById('startRecordBtn');
+
+    if (exportVideoBtn && videoModal) {
+      exportVideoBtn.addEventListener('click', () => {
+        videoModal.classList.add('active');
+      });
+    }
+
+    if (closeVideoModalBtn && videoModal) {
+      closeVideoModalBtn.addEventListener('click', () => {
+        videoModal.classList.remove('active');
+      });
+    }
+
+    if (startRecordBtn) {
+      startRecordBtn.addEventListener('click', () => {
+        const studioCanvas = document.getElementById('studioCanvas');
+        if (!studioCanvas) return;
+
+        const durationSec = parseInt(document.getElementById('videoDurationSelect').value, 10) || 5;
+        const fps = parseInt(document.getElementById('videoFpsSelect').value, 10) || 60;
+        const format = document.getElementById('videoFormatSelect').value || 'mp4';
+
+        const progressContainer = document.getElementById('videoProgressContainer');
+        const progressBar = document.getElementById('videoProgressBar');
+        const progressVal = document.getElementById('videoProgressVal');
+
+        if (progressContainer) progressContainer.style.display = 'block';
+        startRecordBtn.disabled = true;
+        startRecordBtn.textContent = '🎥 Recording Canvas...';
+
+        const recorder = new window.CanvasVideoRecorder(studioCanvas);
+        recorder.startRecording({
+          fps: fps,
+          durationSec: durationSec,
+          format: format,
+          onProgress: (percent, remainingSec) => {
+            if (progressBar) progressBar.style.width = percent + '%';
+            if (progressVal) progressVal.textContent = percent + '% (' + remainingSec + 's left)';
+          },
+          onComplete: (result) => {
+            startRecordBtn.disabled = false;
+            startRecordBtn.textContent = '🎬 Record & Export Video';
+            if (progressContainer) progressContainer.style.display = 'none';
+            if (videoModal) videoModal.classList.remove('active');
+
+            const link = document.createElement('a');
+            link.download = `gradient_animation_${Date.now()}.${result.ext}`;
+            link.href = result.url;
+            link.click();
+            window.showToast(`Exported Animated ${result.ext.toUpperCase()} Video!`);
+          },
+          onError: (err) => {
+            startRecordBtn.disabled = false;
+            startRecordBtn.textContent = '🎬 Record & Export Video';
+            if (progressContainer) progressContainer.style.display = 'none';
+            window.showToast('Video recording error: ' + err.message);
+          }
+        });
+      });
+    }
   }
 
   return {
