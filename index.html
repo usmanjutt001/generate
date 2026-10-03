@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gradient Studio & Bulk Generator</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon"></div>
+      <span>Gradient Studio</span>
+    </div>
+
+    <ul class="nav-tabs">
+      <li><button class="nav-tab-btn active" data-tab="studio">Studio</button></li>
+      <li><button class="nav-tab-btn" data-tab="bulk">Bulk Generator</button></li>
+      <li><button class="nav-tab-btn" data-tab="gallery">Gallery</button></li>
+      <li><button class="nav-tab-btn" data-tab="palette">Palette</button></li>
+      <li><button class="nav-tab-btn" data-tab="saved">Saved</button></li>
+      <li><button class="nav-tab-btn" data-tab="whatsnew">What's New</button></li>
+    </ul>
+
+    <div class="header-actions">
+      <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Light/Dark Theme">
+        <span id="themeIcon">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main View Area -->
+  <main>
+
+    <!-- TAB 1: STUDIO (Main Editor) -->
+    <section id="studio" class="tab-content active">
+      <div class="studio-container">
+
+        <!-- Left / Top: Live Canvas Area & Toolbar -->
+        <div class="canvas-section">
+          <div class="top-toolbar">
+            <div class="toolbar-group">
+              <button class="btn" id="saveBookmarkBtn">🔖 Save Bookmark</button>
+              <button class="btn" id="shareLinkBtn">🔗 Share Link</button>
+              <button class="btn" id="toggleFrameBtn">🖼️ Frame Overlay</button>
+              <button class="btn" id="livePreviewBtn">👁️ Live Preview</button>
+            </div>
+            <div class="toolbar-group">
+              <button class="btn" id="exportPngBtn">📷 Export PNG</button>
+              <button class="btn" id="exportSvgBtn">📐 Export SVG</button>
+              <button class="btn btn-primary" id="exportCssBtn">💻 Copy CSS</button>
+            </div>
+          </div>
+
+          <div class="canvas-viewport" id="canvasViewport">
+            <canvas id="studioCanvas"></canvas>
+            <div class="frame-overlay" id="frameOverlay" style="display: none;">
+              1920 &times; 1080 Frame Preview
+            </div>
+          </div>
+        </div>
+
+        <!-- Right / Bottom: Controls Sidebar -->
+        <aside class="controls-sidebar">
+
+          <!-- Mode Selector -->
+          <div class="control-group">
+            <div class="control-label">Gradient Render Mode</div>
+            <div class="mode-grid">
+              <div class="mode-card active" data-mode="mesh">Mesh / Organic</div>
+              <div class="mode-card" data-mode="forms">Forms / Spheres</div>
+              <div class="mode-card" data-mode="sky">Sky / Multi-Stop</div>
+              <div class="mode-card" data-mode="aurora">Aurora Waves</div>
+              <div class="mode-card" data-mode="glow">Glow & Prism</div>
+            </div>
+          </div>
+
+          <!-- Color Palette Controls -->
+          <div class="control-group">
+            <div class="control-label">
+              <span>Color Stops</span>
+              <div>
+                <button class="btn btn-sm" id="resetColorsBtn">🔄 Reset</button>
+                <button class="btn btn-sm" id="shuffleColorsBtn">🎲 Shuffle</button>
+                <button class="btn btn-sm" id="addColorBtn">➕ Add Color</button>
+              </div>
+            </div>
+            <div class="colors-list" id="colorsList"></div>
+          </div>
+
+          <!-- Controls & Sliders -->
+          <div class="control-group">
+            <div class="control-label">
+              <span>Noise & Grain Intensity</span>
+              <span id="noiseVal">15%</span>
+            </div>
+            <input type="range" class="range-slider" id="noiseSlider" min="0" max="50" value="15">
+          </div>
+
+          <div class="control-group">
+            <div class="control-label">
+              <span>Animation / Flow Speed</span>
+              <span id="speedVal">Static</span>
+            </div>
+            <input type="range" class="range-slider" id="speedSlider" min="0" max="100" value="0">
+          </div>
+
+          <div class="control-group">
+            <div class="control-label">
+              <span>Blur & Smoothness</span>
+              <span id="blurVal">50px</span>
+            </div>
+            <input type="range" class="range-slider" id="blurSlider" min="5" max="120" value="50">
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="control-group">
+            <div class="control-label">Presets</div>
+            <div class="preset-pills" id="presetPillsList"></div>
+          </div>
+
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- TAB 2: BULK GENERATOR -->
+    <section id="bulk" class="tab-content">
+      <div class="bulk-container">
+
+        <div class="bulk-controls-card">
+          <div class="control-group">
+            <div class="control-label">Asset Quantity: <span id="quantityVal">20</span></div>
+            <input type="range" class="range-slider" id="quantitySlider" min="5" max="50" value="20">
+          </div>
+
+          <div class="control-group">
+            <div class="control-label">Aspect Ratio / Resolution</div>
+            <select class="btn" id="aspectRatioSelect" style="width: 100%; text-align: left;">
+              <option value="16:9">Desktop Wallpaper (16:9 - 1920x1080)</option>
+              <option value="9:16">Mobile Wallpaper (9:16 - 1080x1920)</option>
+              <option value="1:1">Square Post (1:1 - 1080x1080)</option>
+              <option value="4:5">Portrait Social (4:5 - 1080x1350)</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <div class="control-label">Color Palette Theme</div>
+            <select class="btn" id="bulkThemeSelect" style="width: 100%; text-align: left;">
+              <option value="all">All Themes (Maximum Variety)</option>
+              <option value="neon">Vibrant Neon</option>
+              <option value="pastel">Pastel Soft</option>
+              <option value="cyberpunk">Dark Cyberpunk</option>
+              <option value="earth">Earth Tones</option>
+              <option value="sunset">Sunset Warmth</option>
+            </select>
+          </div>
+
+          <div class="control-group" style="grid-column: span 1;">
+            <button class="btn btn-primary" id="generateBatchBtn" style="width: 100%; justify-content: center; padding: 0.75rem;">
+              ⚡ Generate Batch (&Delta;E &ge; 35 Uniqueness)
+            </button>
+          </div>
+
+          <div class="control-group" style="grid-column: span 1;">
+            <button class="btn" id="downloadZipBtn" style="width: 100%; justify-content: center; padding: 0.75rem;" disabled>
+              📦 Download All as ZIP (.zip)
+            </button>
+          </div>
+        </div>
+
+        <!-- Bulk Output Gallery -->
+        <div class="gallery-grid" id="bulkGalleryGrid">
+          <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--text-secondary);">
+            Click "Generate Batch" to produce unique high-resolution gradient wallpapers.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 3: GALLERY (Curated Presets) -->
+    <section id="gallery" class="tab-content">
+      <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2>Curated Gradient Gallery</h2>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">Explore painterly gradients inspired by Japanese traditional colors & modern aesthetics.</p>
+        </div>
+        <input type="text" id="gallerySearchInput" placeholder="Search presets..." class="btn" style="padding: 0.5rem 1rem; width: 250px;">
+      </div>
+      <div class="gallery-grid" id="curatedGalleryGrid"></div>
+    </section>
+
+    <!-- TAB 4: PALETTE (Color Theme Explorer) -->
+    <section id="palette" class="tab-content">
+      <div style="margin-bottom: 1.5rem;">
+        <h2>Color Theme Explorer</h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">Traditional Japanese palettes & modern designer color sets.</p>
+      </div>
+      <div class="palette-grid" id="paletteExplorerGrid"></div>
+    </section>
+
+    <!-- TAB 5: SAVED (Bookmarks) -->
+    <section id="saved" class="tab-content">
+      <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <h2>Saved Bookmarks</h2>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">Your locally saved gradient designs stored in your browser.</p>
+        </div>
+        <button class="btn btn-danger" id="clearSavedBtn">🗑️ Clear All Saved</button>
+      </div>
+      <div class="gallery-grid" id="savedGrid"></div>
+    </section>
+
+    <!-- TAB 6: WHAT'S NEW -->
+    <section id="whatsnew" class="tab-content">
+      <div style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
+        <h2>What's New in Gradient Studio v2.5</h2>
+        <div class="palette-card">
+          <span class="badge badge-accent" style="width: max-content;">New Feature</span>
+          <h3>Bulk Wallpaper Generator with Delta E Filtering</h3>
+          <p style="color: var(--text-secondary); line-height: 1.6;">
+            Generate up to 50 high-resolution desktop, mobile, and social media wallpapers in a single click. Uses CIEDE2000 color distance algorithm (&Delta;E &ge; 35) to enforce maximum visual uniqueness.
+          </p>
+        </div>
+        <div class="palette-card">
+          <span class="badge badge-accent" style="width: max-content;">Offline Capable</span>
+          <h3>100% Self-Contained Desktop & Offline Execution</h3>
+          <p style="color: var(--text-secondary); line-height: 1.6;">
+            Runs completely offline without external CDN dependencies. Includes a standalone single-executable launcher powered by Python & PyInstaller.
+          </p>
+        </div>
+        <div class="palette-card">
+          <span class="badge badge-accent" style="width: max-content;">Render Engine</span>
+          <h3>5 Painterly & Organic Render Modes</h3>
+          <p style="color: var(--text-secondary); line-height: 1.6;">
+            Features Mesh Fluid, Soft Spheres, Multi-stop Sky, Aurora Shimmering Waves, and Prism Glow effects with real-time film grain overlays.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- CSS Code Modal -->
+  <div class="modal-backdrop" id="cssModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Export CSS Gradient Code</div>
+        <button class="btn btn-sm" onclick="document.getElementById('cssModal').classList.remove('active')">&times; Close</button>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-secondary);">Copy this CSS snippet into your stylesheets or web application:</p>
+      <pre class="code-block" id="cssCodeSnippet"></pre>
+      <button class="btn btn-primary" id="copyCssCodeBtn">📋 Copy Snippet</button>
+    </div>
+  </div>
+
+  <!-- Live Preview Modal -->
+  <div class="modal-backdrop" id="previewModal">
+    <div class="modal-content" style="max-width: 90vw; width: 1000px; height: 80vh;">
+      <div class="modal-header">
+        <div class="modal-title">Live Preview</div>
+        <button class="btn btn-sm" onclick="document.getElementById('previewModal').classList.remove('active')">&times; Close</button>
+      </div>
+      <div style="flex: 1; position: relative; overflow: hidden; border-radius: var(--radius-md);">
+        <canvas id="previewCanvas" style="width: 100%; height: 100%; object-fit: contain;"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">Notification message</div>
+
+  <!-- Local JS Dependencies & Application Scripts -->
+  <script src="assets/js/jszip.min.js"></script>
+  <script src="assets/js/cielab.js"></script>
+  <script src="assets/js/renderer.js"></script>
+  <script src="assets/js/studio.js"></script>
+  <script src="assets/js/toolbar.js"></script>
+  <script src="assets/js/bulk.js"></script>
+  <script src="assets/js/zipexporter.js"></script>
+  <script src="assets/js/tabs.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
