@@ -1,38 +1,35 @@
 /**
- * Studio Editor Controller
- * Handles dynamic color pickers, WCAG contrast calculation, presets, sliders, and canvas rendering.
+ * Studio Workbench Editor
+ * Enhanced with Traditional Japanese Color Picker, Figma SVG copy, angle slider, and 10 render modes.
  */
 
 window.StudioEditor = (function () {
 
-  // Preset Gradients List
   const PRESETS = [
-    { name: "Iridescent Cloud", mode: "mesh", colors: ["#a855f7", "#ec4899", "#3b82f6", "#e0e7ff"] },
-    { name: "Opal", mode: "forms", colors: ["#cbd5e1", "#f1f5f9", "#93c5fd", "#f472b6"] },
-    { name: "Lagoon", mode: "mesh", colors: ["#06b6d4", "#3b82f6", "#10b981", "#67e8f9"] },
-    { name: "Emerald", mode: "aurora", colors: ["#059669", "#10b981", "#34d399", "#064e3b"] },
-    { name: "Solar Flare", mode: "glow", colors: ["#f97316", "#ef4444", "#eab308", "#7c2d12"] },
-    { name: "Orchid", mode: "forms", colors: ["#d946ef", "#8b5cf6", "#ec4899", "#f472b6"] },
-    { name: "Peach Glow", mode: "mesh", colors: ["#fb923c", "#f43f5e", "#fed7aa", "#f472b6"] },
-    { name: "Electric Tide", mode: "aurora", colors: ["#3b82f6", "#6366f1", "#8b5cf6", "#06b6d4"] },
-    { name: "Sunset", mode: "sky", colors: ["#0f172a", "#4c1d95", "#c026d3", "#fb923c", "#fde047"] },
-    { name: "Mint Ice", mode: "mesh", colors: ["#a7f3d0", "#6ee7b7", "#38bdf8", "#f0fdf4"] },
-    { name: "Midnight Bloom", mode: "glow", colors: ["#1e1b4b", "#4338ca", "#6d28d9", "#be185d"] },
-    { name: "Rose Gold", mode: "sky", colors: ["#f43f5e", "#fb7185", "#fecdd3", "#e11d48"] }
+    { name: "Sakura Blossom (桜)", mode: "mesh", colors: ["#ffb7c5", "#e056fd", "#f7f6f0", "#33a3a4"] },
+    { name: "Matcha Mist (抹茶)", mode: "grainy", colors: ["#556b2f", "#5dbb63", "#f7f6f0"] },
+    { name: "Fuji Sunset (富士)", mode: "sky", colors: ["#162447", "#5f27cd", "#b7282e", "#ffa400"] },
+    { name: "Indigo Wave (藍)", mode: "wave", colors: ["#162447", "#33a3a4", "#f7f6f0"] },
+    { name: "Cyber Tokyo", mode: "glow", colors: ["#b7282e", "#33a3a4", "#5f27cd", "#1c1c1c"] },
+    { name: "8-Bit Arcade", mode: "pixel", colors: ["#ffa400", "#b7282e", "#556b2f", "#162447"] },
+    { name: "Zen Garden", mode: "forms", colors: ["#f7f6f0", "#556b2f", "#ca6f1e"] },
+    { name: "Aurora Shimmer", mode: "aurora", colors: ["#33a3a4", "#5dbb63", "#5f27cd"] },
+    { name: "Conic Sunrise", mode: "conic", colors: ["#b7282e", "#ffa400", "#f7f6f0", "#162447"] },
+    { name: "Opal Radial", mode: "radial", colors: ["#f7f6f0", "#ffb7c5", "#33a3a4"] }
   ];
 
   let config = {
     mode: "mesh",
-    colors: ["#6366f1", "#a855f7", "#ec4899"],
+    colors: ["#ffb7c5", "#5f27cd", "#33a3a4"],
     noise: 15,
     blur: 50,
-    speed: 0
+    speed: 0,
+    angle: 45
   };
 
   let animationFrameId = null;
   let startTime = Date.now();
 
-  // Helper: Calculate luminance for WCAG contrast
   function getLuminance(hex) {
     const rgb = window.GradientRenderer.hexToRgb(hex);
     const a = [rgb.r, rgb.g, rgb.b].map(v => {
@@ -42,7 +39,6 @@ window.StudioEditor = (function () {
     return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
   }
 
-  // Calculate contrast ratio against white & dark text
   function getContrastBadge(hex) {
     const lum = getLuminance(hex);
     const contrastWhite = (1.0 + 0.05) / (lum + 0.05);
@@ -58,7 +54,32 @@ window.StudioEditor = (function () {
     }
   }
 
-  // Render color pickers UI
+  // Render Japanese Color Swatches Bar
+  function renderJapaneseSwatches() {
+    const container = document.getElementById('japaneseSwatchesList');
+    if (!container) return;
+
+    container.innerHTML = '';
+    window.GradientRenderer.JAPANESE_COLORS.forEach(c => {
+      const swatch = document.createElement('button');
+      swatch.className = 'preset-pill';
+      swatch.style.display = 'inline-flex';
+      swatch.style.alignItems = 'center';
+      swatch.style.gap = '0.3rem';
+      swatch.innerHTML = `<span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:${c.hex}; border:1px solid rgba(255,255,255,0.3);"></span> ${c.name}`;
+      swatch.addEventListener('click', () => {
+        if (config.colors.length < 5) {
+          config.colors.push(c.hex);
+          renderColorControls();
+          renderCanvas();
+        } else {
+          window.showToast("Maximum 5 colors allowed");
+        }
+      });
+      container.appendChild(swatch);
+    });
+  }
+
   function renderColorControls() {
     const list = document.getElementById('colorsList');
     if (!list) return;
@@ -76,7 +97,6 @@ window.StudioEditor = (function () {
       list.appendChild(row);
     });
 
-    // Attach event listeners
     list.querySelectorAll('.color-input').forEach(input => {
       input.addEventListener('input', (e) => {
         const idx = parseInt(e.target.dataset.index);
@@ -113,7 +133,6 @@ window.StudioEditor = (function () {
     });
   }
 
-  // Render preset buttons
   function renderPresets() {
     const container = document.getElementById('presetPillsList');
     if (!container) return;
@@ -127,7 +146,6 @@ window.StudioEditor = (function () {
         config.mode = p.mode;
         config.colors = [...p.colors];
 
-        // Update active mode card UI
         document.querySelectorAll('.mode-card').forEach(card => {
           card.classList.toggle('active', card.dataset.mode === p.mode);
         });
@@ -139,7 +157,6 @@ window.StudioEditor = (function () {
     });
   }
 
-  // Render Studio Canvas
   function renderCanvas() {
     const canvas = document.getElementById('studioCanvas');
     if (!canvas) return;
@@ -154,7 +171,6 @@ window.StudioEditor = (function () {
     window.GradientRenderer.render(canvas, config, elapsed);
   }
 
-  // Animation Loop for live flow
   function startAnimationLoop() {
     if (animationFrameId) cancelAnimationFrame(animationFrameId);
     function loop() {
@@ -166,17 +182,11 @@ window.StudioEditor = (function () {
     loop();
   }
 
-  // Randomize colors helper
   function getRandomHex() {
     return '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
   }
 
-  // Init Studio Controls & Event Listeners
   function init() {
-    const canvas = document.getElementById('studioCanvas');
-    if (!canvas) return;
-
-    // Mode Selector listeners
     document.querySelectorAll('.mode-card').forEach(card => {
       card.addEventListener('click', () => {
         document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
@@ -186,7 +196,6 @@ window.StudioEditor = (function () {
       });
     });
 
-    // Add Color Button
     const addColorBtn = document.getElementById('addColorBtn');
     if (addColorBtn) {
       addColorBtn.addEventListener('click', () => {
@@ -200,17 +209,15 @@ window.StudioEditor = (function () {
       });
     }
 
-    // Reset Colors Button
     const resetBtn = document.getElementById('resetColorsBtn');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
-        config.colors = ["#6366f1", "#a855f7", "#ec4899"];
+        config.colors = ["#ffb7c5", "#5f27cd", "#33a3a4"];
         renderColorControls();
         renderCanvas();
       });
     }
 
-    // Shuffle Colors Button
     const shuffleBtn = document.getElementById('shuffleColorsBtn');
     if (shuffleBtn) {
       shuffleBtn.addEventListener('click', () => {
@@ -220,7 +227,6 @@ window.StudioEditor = (function () {
       });
     }
 
-    // Sliders
     const noiseSlider = document.getElementById('noiseSlider');
     if (noiseSlider) {
       noiseSlider.addEventListener('input', (e) => {
@@ -239,6 +245,15 @@ window.StudioEditor = (function () {
       });
     }
 
+    const angleSlider = document.getElementById('angleSlider');
+    if (angleSlider) {
+      angleSlider.addEventListener('input', (e) => {
+        config.angle = parseInt(e.target.value);
+        document.getElementById('angleVal').textContent = `${config.angle}°`;
+        renderCanvas();
+      });
+    }
+
     const speedSlider = document.getElementById('speedSlider');
     if (speedSlider) {
       speedSlider.addEventListener('input', (e) => {
@@ -247,6 +262,7 @@ window.StudioEditor = (function () {
       });
     }
 
+    renderJapaneseSwatches();
     renderColorControls();
     renderPresets();
     renderCanvas();

@@ -1,6 +1,6 @@
 /**
  * Bulk Asset Generator Engine & Gallery UI
- * Handles generating batch gradient assets using CIEDE2000 uniqueness filtering (Delta E >= 35).
+ * Supports 10 Gradient Types & Japanese Palettes with Delta E >= 35 filtering.
  */
 
 window.BulkGenerator = (function () {
@@ -8,43 +8,44 @@ window.BulkGenerator = (function () {
   let generatedBatch = [];
 
   const THEMES = {
+    japanese: [
+      ["#ffb7c5", "#5f27cd", "#33a3a4"],
+      ["#556b2f", "#5dbb63", "#f7f6f0"],
+      ["#162447", "#b7282e", "#ffa400"],
+      ["#162447", "#33a3a4", "#f7f6f0"]
+    ],
     neon: [
       ["#ff007f", "#00f0ff", "#7000ff"],
       ["#00ff66", "#ff00d4", "#3a00ff"],
-      ["#ffe600", "#ff0055", "#00e5ff"],
-      ["#bf00ff", "#00ffff", "#ff00aa"]
+      ["#ffe600", "#ff0055", "#00e5ff"]
     ],
     pastel: [
       ["#fbcfe8", "#fef08a", "#bae6fd"],
       ["#ddd6fe", "#fbcfe8", "#fed7aa"],
-      ["#a7f3d0", "#bae6fd", "#fef08a"],
-      ["#fecdd3", "#e0e7ff", "#dcfce7"]
+      ["#a7f3d0", "#bae6fd", "#fef08a"]
     ],
     cyberpunk: [
       ["#050515", "#f43f5e", "#06b6d4"],
       ["#09090b", "#a855f7", "#ec4899"],
-      ["#020617", "#10b981", "#3b82f6"],
-      ["#18181b", "#eab308", "#ef4444"]
+      ["#020617", "#10b981", "#3b82f6"]
     ],
     earth: [
       ["#2d3748", "#a0aec0", "#4a5568"],
       ["#78350f", "#d97706", "#fef3c7"],
-      ["#064e3b", "#047857", "#a7f3d0"],
-      ["#451a03", "#b45309", "#fde68a"]
+      ["#064e3b", "#047857", "#a7f3d0"]
     ],
     sunset: [
       ["#0f172a", "#581c87", "#c026d3", "#fb923c"],
       ["#1e1b4b", "#7c3aed", "#f43f5e", "#fde047"],
-      ["#311b92", "#b71c1c", "#f57f17", "#fff59d"],
-      ["#2a0845", "#6441a5", "#ffb347", "#ffcc00"]
+      ["#311b92", "#b71c1c", "#f57f17", "#fff59d"]
     ]
   };
 
-  const MODES = ["mesh", "forms", "sky", "aurora", "glow"];
+  const MODES = ["mesh", "grainy", "forms", "sky", "aurora", "glow", "conic", "pixel", "wave", "radial"];
   const NAMES = [
-    "Nebula Mesh", "Vapor Glow", "Solar Flare", "Celestial Sky", "Aurora Wave",
-    "Prism Bloom", "Opal Drift", "Emerald Dawn", "Cosmic Shimmer", "Velvet Tide",
-    "Luminous Sphere", "Quantum Flow", "Midnight Aura", "Iris Field", "Golden Eclipse"
+    "Sakura Mesh", "Matcha Grain", "Fuji Sunset", "Indigo Wave", "Cyber Glow",
+    "8-Bit Arcade", "Zen Garden", "Aurora Wave", "Conic Sweep", "Opal Radial",
+    "Nebula Drift", "Prism Flare", "Cosmic Shimmer", "Velvet Tide", "Golden Eclipse"
   ];
 
   function getRandomHex() {
@@ -59,20 +60,18 @@ window.BulkGenerator = (function () {
       if (themeKey !== 'all' && THEMES[themeKey]) {
         const pool = THEMES[themeKey];
         const base = pool[Math.floor(Math.random() * pool.length)];
-        colors = base.map(c => c);
-        // Perturb slightly or add a random stop
+        colors = [...base];
         if (Math.random() > 0.5 && colors.length < 5) {
           colors.push(getRandomHex());
         }
       } else {
-        const numColors = Math.floor(Math.random() * 3) + 2; // 2 to 4 colors
+        const numColors = Math.floor(Math.random() * 3) + 2;
         colors = [];
         for (let i = 0; i < numColors; i++) {
           colors.push(getRandomHex());
         }
       }
 
-      // If no existing palettes or passes Delta E >= 35, accept
       if (existingPalettes.length === 0 || window.ColorLab.isPaletteUnique(colors, existingPalettes, 35)) {
         return colors;
       }
@@ -104,14 +103,15 @@ window.BulkGenerator = (function () {
         colors: colors,
         aspectRatio: aspectRatio,
         noise: 15,
-        blur: 50
+        blur: 50,
+        angle: 45
       });
     }
 
     renderBatchGallery();
     const downloadZipBtn = document.getElementById('downloadZipBtn');
     if (downloadZipBtn) downloadZipBtn.disabled = false;
-    window.showToast(`Generated ${quantity} unique wallpapers with Delta E >= 35!`);
+    window.showToast(`Generated ${quantity} unique wallpapers across 10 modes (&Delta;E &ge; 35)!`);
   }
 
   function getAspectRatioClass(ratio) {
@@ -160,7 +160,6 @@ window.BulkGenerator = (function () {
 
       grid.appendChild(card);
 
-      // Render thumbnail canvas
       setTimeout(() => {
         const c = document.getElementById(`bulkCanvas_${index}`);
         if (c) {
@@ -173,7 +172,6 @@ window.BulkGenerator = (function () {
       }, 10);
     });
 
-    // Event listeners
     grid.querySelectorAll('.edit-studio-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const idx = parseInt(e.target.dataset.index);
@@ -182,10 +180,10 @@ window.BulkGenerator = (function () {
           mode: item.mode,
           colors: [...item.colors],
           noise: item.noise,
-          blur: item.blur
+          blur: item.blur,
+          angle: item.angle
         });
 
-        // Switch tab to studio
         const studioTabBtn = document.querySelector('.nav-tab-btn[data-tab="studio"]');
         if (studioTabBtn) studioTabBtn.click();
         window.showToast(`Loaded ${item.title} into Studio Editor`);

@@ -1,17 +1,20 @@
 /**
  * Gallery, Palette, and Saved Tabs Controller
+ * Features Traditional Japanese Color Sets & 10 FeralUI Gradient Presets
  */
 
 window.GalleryTab = (function () {
   const CURATED_PRESETS = [
-    { name: "Sakura Blossom (桜)", mode: "mesh", colors: ["#ffb7c5", "#ff69b4", "#ffe4e1", "#e6e6fa"], category: "japanese" },
-    { name: "Matcha Mist (抹茶)", mode: "aurora", colors: ["#556b2f", "#8fbc8f", "#2e8b57", "#d3ffce"], category: "japanese" },
-    { name: "Fuji Sunset (富士)", mode: "sky", colors: ["#191970", "#4b0082", "#ff4500", "#ffd700"], category: "japanese" },
-    { name: "Indigo Wave (藍)", mode: "mesh", colors: ["#000080", "#1e90ff", "#00bfff", "#e0ffff"], category: "japanese" },
-    { name: "Cyber Tokyo", mode: "glow", colors: ["#ff007f", "#00f0ff", "#7000ff", "#000000"], category: "modern" },
-    { name: "Nordic Dusk", mode: "sky", colors: ["#2d3748", "#4a5568", "#a0aec0", "#e2e8f0"], category: "modern" },
-    { name: "Vaporware Dreams", mode: "mesh", colors: ["#ff71ce", "#01cdfe", "#05ffa1", "#b967ff"], category: "modern" },
-    { name: "Golden Autumn (秋)", mode: "forms", colors: ["#d97706", "#b45309", "#78350f", "#fef3c7"], category: "japanese" }
+    { name: "Sakura Blossom (桜)", mode: "mesh", colors: ["#ffb7c5", "#e056fd", "#f7f6f0", "#33a3a4"], category: "japanese" },
+    { name: "Matcha Mist (抹茶)", mode: "grainy", colors: ["#556b2f", "#5dbb63", "#f7f6f0"], category: "japanese" },
+    { name: "Fuji Sunset (富士)", mode: "sky", colors: ["#162447", "#5f27cd", "#b7282e", "#ffa400"], category: "japanese" },
+    { name: "Indigo Wave (藍)", mode: "wave", colors: ["#162447", "#33a3a4", "#f7f6f0"], category: "japanese" },
+    { name: "Cyber Tokyo", mode: "glow", colors: ["#b7282e", "#33a3a4", "#5f27cd", "#1c1c1c"], category: "modern" },
+    { name: "8-Bit Arcade", mode: "pixel", colors: ["#ffa400", "#b7282e", "#556b2f", "#162447"], category: "modern" },
+    { name: "Zen Garden", mode: "forms", colors: ["#f7f6f0", "#556b2f", "#ca6f1e"], category: "japanese" },
+    { name: "Aurora Shimmer", mode: "aurora", colors: ["#33a3a4", "#5dbb63", "#5f27cd"], category: "modern" },
+    { name: "Conic Sunrise", mode: "conic", colors: ["#b7282e", "#ffa400", "#f7f6f0", "#162447"], category: "japanese" },
+    { name: "Opal Radial", mode: "radial", colors: ["#f7f6f0", "#ffb7c5", "#33a3a4"], category: "modern" }
   ];
 
   function renderCuratedGallery(filter = "") {
@@ -76,12 +79,12 @@ window.GalleryTab = (function () {
 
 window.PaletteTab = (function () {
   const PALETTES = [
-    { title: "Traditional Japanese Color Set 1", colors: ["#c73e3a", "#e87a90", "#26453d", "#f8f4e6"] },
-    { title: "Traditional Japanese Color Set 2", colors: ["#1c1c1c", "#8b0000", "#d4af37", "#f5f5dc"] },
-    { title: "Vibrant Neon Synth", colors: ["#ff0055", "#00e5ff", "#7000ff", "#ffe600"] },
-    { title: "Pastel Meadow", colors: ["#fbcfe8", "#bae6fd", "#a7f3d0", "#fef08a"] },
-    { title: "Cyberpunk Night", colors: ["#0f172a", "#f43f5e", "#06b6d4", "#a855f7"] },
-    { title: "Earth & Forest", colors: ["#2d3748", "#064e3b", "#b45309", "#fde68a"] }
+    { title: "Traditional Japanese - Spring Sakura (春の桜)", colors: ["#ffb7c5", "#e056fd", "#f7f6f0", "#162447"] },
+    { title: "Traditional Japanese - Matcha Zen (抹茶)", colors: ["#556b2f", "#5dbb63", "#f7f6f0", "#1c1c1c"] },
+    { title: "Traditional Japanese - Indigo Sea (藍色)", colors: ["#162447", "#33a3a4", "#f7f6f0", "#ca6f1e"] },
+    { title: "Traditional Japanese - Akane Crimson (茜色)", colors: ["#b7282e", "#ffa400", "#1c1c1c", "#f7f6f0"] },
+    { title: "Cyberpunk Tokyo Night", colors: ["#050515", "#f43f5e", "#06b6d4", "#a855f7"] },
+    { title: "Pastel Meadow", colors: ["#fbcfe8", "#bae6fd", "#a7f3d0", "#fef08a"] }
   ];
 
   function renderPaletteExplorer() {
@@ -98,7 +101,7 @@ window.PaletteTab = (function () {
       card.innerHTML = `
         <h3>${p.title}</h3>
         <div class="swatch-bar">${swatches}</div>
-        <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; justify-style:space-between; align-items:center; margin-top:0.5rem;">
           <span style="font-size:0.8rem; font-family:monospace; color:var(--text-secondary);">${p.colors.join(', ')}</span>
           <button class="btn btn-sm apply-palette-btn" data-index="${idx}">Apply in Studio</button>
         </div>

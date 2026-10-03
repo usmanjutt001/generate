@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gradient Studio & Bulk Generator</title>
+  <title>Free Gradient Generator · mesh, grainy and animated gradients | FeralUI</title>
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -12,7 +12,7 @@
   <header>
     <div class="brand">
       <div class="brand-icon"></div>
-      <span>Gradient Studio</span>
+      <span>FeralUI Gradient Studio</span>
     </div>
 
     <ul class="nav-tabs">
@@ -49,7 +49,7 @@
             </div>
             <div class="toolbar-group">
               <button class="btn" id="exportPngBtn">📷 Export PNG</button>
-              <button class="btn" id="exportSvgBtn">📐 Export SVG</button>
+              <button class="btn" id="exportSvgBtn">🎨 Copy to Figma (SVG)</button>
               <button class="btn btn-primary" id="exportCssBtn">💻 Copy CSS</button>
             </div>
           </div>
@@ -65,15 +65,20 @@
         <!-- Right / Bottom: Controls Sidebar -->
         <aside class="controls-sidebar">
 
-          <!-- Mode Selector -->
+          <!-- Mode Selector (10 Modes matching feralui.dev/gradients) -->
           <div class="control-group">
-            <div class="control-label">Gradient Render Mode</div>
-            <div class="mode-grid">
-              <div class="mode-card active" data-mode="mesh">Mesh / Organic</div>
+            <div class="control-label">Gradient Type</div>
+            <div class="mode-grid" style="grid-template-columns: repeat(2, 1fr);">
+              <div class="mode-card active" data-mode="mesh">Mesh / Fluid</div>
+              <div class="mode-card" data-mode="grainy">Grainy Retro</div>
               <div class="mode-card" data-mode="forms">Forms / Spheres</div>
               <div class="mode-card" data-mode="sky">Sky / Multi-Stop</div>
               <div class="mode-card" data-mode="aurora">Aurora Waves</div>
               <div class="mode-card" data-mode="glow">Glow & Prism</div>
+              <div class="mode-card" data-mode="conic">Conic Sweep</div>
+              <div class="mode-card" data-mode="pixel">Pixel 8-Bit</div>
+              <div class="mode-card" data-mode="wave">Wave Ribbons</div>
+              <div class="mode-card" data-mode="radial">Radial Falloff</div>
             </div>
           </div>
 
@@ -90,13 +95,27 @@
             <div class="colors-list" id="colorsList"></div>
           </div>
 
+          <!-- Traditional Japanese Color Swatches Quick-Pick -->
+          <div class="control-group">
+            <div class="control-label">Traditional Japanese Colors (日本の伝統色)</div>
+            <div class="preset-pills" id="japaneseSwatchesList" style="max-height: 120px; overflow-y: auto;"></div>
+          </div>
+
           <!-- Controls & Sliders -->
           <div class="control-group">
             <div class="control-label">
-              <span>Noise & Grain Intensity</span>
+              <span>Grainy Noise Texture</span>
               <span id="noiseVal">15%</span>
             </div>
-            <input type="range" class="range-slider" id="noiseSlider" min="0" max="50" value="15">
+            <input type="range" class="range-slider" id="noiseSlider" min="0" max="60" value="15">
+          </div>
+
+          <div class="control-group">
+            <div class="control-label">
+              <span>Gradient Angle</span>
+              <span id="angleVal">45°</span>
+            </div>
+            <input type="range" class="range-slider" id="angleSlider" min="0" max="360" value="45">
           </div>
 
           <div class="control-group">
@@ -109,7 +128,7 @@
 
           <div class="control-group">
             <div class="control-label">
-              <span>Blur & Smoothness</span>
+              <span>Blur & Softness</span>
               <span id="blurVal">50px</span>
             </div>
             <input type="range" class="range-slider" id="blurSlider" min="5" max="120" value="50">
@@ -150,6 +169,7 @@
             <div class="control-label">Color Palette Theme</div>
             <select class="btn" id="bulkThemeSelect" style="width: 100%; text-align: left;">
               <option value="all">All Themes (Maximum Variety)</option>
+              <option value="japanese">Traditional Japanese Palettes</option>
               <option value="neon">Vibrant Neon</option>
               <option value="pastel">Pastel Soft</option>
               <option value="cyberpunk">Dark Cyberpunk</option>
@@ -196,7 +216,7 @@
     <!-- TAB 4: PALETTE (Color Theme Explorer) -->
     <section id="palette" class="tab-content">
       <div style="margin-bottom: 1.5rem;">
-        <h2>Color Theme Explorer</h2>
+        <h2>Traditional Japanese Color Explorer</h2>
         <p style="color: var(--text-secondary); font-size: 0.9rem;">Traditional Japanese palettes & modern designer color sets.</p>
       </div>
       <div class="palette-grid" id="paletteExplorerGrid"></div>
@@ -217,26 +237,26 @@
     <!-- TAB 6: WHAT'S NEW -->
     <section id="whatsnew" class="tab-content">
       <div style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
-        <h2>What's New in Gradient Studio v2.5</h2>
+        <h2>What's New in Gradient Studio v2.5 (FeralUI Clone)</h2>
+        <div class="palette-card">
+          <span class="badge badge-accent" style="width: max-content;">FeralUI Mirror</span>
+          <h3>10 Painterly Gradient Render Modes & Japanese Color Palettes</h3>
+          <p style="color: var(--text-secondary); line-height: 1.6;">
+            Includes Mesh Fluid, Grainy Retro Blobs, Soft Spheres (Forms), Sky Multi-Stop, Aurora Waves, Glow/Prism, Conic Angular Sweep, Pixel 8-Bit Grid, Wave Ribbons, and Radial Falloff. Features authentic traditional Japanese colors (Sakura, Matcha, Ai, Akane, Yamabuki, Asagi, Murasaki, Kohaku, Sumi).
+          </p>
+        </div>
+        <div class="palette-card">
+          <span class="badge badge-accent" style="width: max-content;">Figma Integration</span>
+          <h3>Editable Layers Copy for Figma</h3>
+          <p style="color: var(--text-secondary); line-height: 1.6;">
+            Export gradients as clean SVG code that pastes directly into Figma as named, editable vector layers.
+          </p>
+        </div>
         <div class="palette-card">
           <span class="badge badge-accent" style="width: max-content;">New Feature</span>
           <h3>Bulk Wallpaper Generator with Delta E Filtering</h3>
           <p style="color: var(--text-secondary); line-height: 1.6;">
             Generate up to 50 high-resolution desktop, mobile, and social media wallpapers in a single click. Uses CIEDE2000 color distance algorithm (&Delta;E &ge; 35) to enforce maximum visual uniqueness.
-          </p>
-        </div>
-        <div class="palette-card">
-          <span class="badge badge-accent" style="width: max-content;">Offline Capable</span>
-          <h3>100% Self-Contained Desktop & Offline Execution</h3>
-          <p style="color: var(--text-secondary); line-height: 1.6;">
-            Runs completely offline without external CDN dependencies. Includes a standalone single-executable launcher powered by Python & PyInstaller.
-          </p>
-        </div>
-        <div class="palette-card">
-          <span class="badge badge-accent" style="width: max-content;">Render Engine</span>
-          <h3>5 Painterly & Organic Render Modes</h3>
-          <p style="color: var(--text-secondary); line-height: 1.6;">
-            Features Mesh Fluid, Soft Spheres, Multi-stop Sky, Aurora Shimmering Waves, and Prism Glow effects with real-time film grain overlays.
           </p>
         </div>
       </div>
